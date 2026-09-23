@@ -25,9 +25,7 @@
     settings.user.email = "solen.travert@gmail.com";
   };
   
-  # programs.firefox.enable = true;
   programs.vesktop.enable = true;
-  # programs.waybar.enable = true;
   programs.bat.enable = true;
   programs.obs-studio.enable = true;
 

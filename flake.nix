@@ -65,12 +65,14 @@
       };
 
       python = pkgs.mkShell {
-        packages = pkgs.python3.withPackages (pkgs: with pkgs; [
-          numpy
-          pillow
-          pip
-          python-lsp-server
-        ]);
+        packages = [
+          (pkgs.python3.withPackages (pkgs: with pkgs; [
+            numpy
+            pillow
+            pip
+            python-lsp-server
+          ]))
+        ];
       };
     };
   };

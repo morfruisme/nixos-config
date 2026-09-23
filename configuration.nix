@@ -6,6 +6,7 @@
   system.stateVersion = "25.11";
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
+  nixpkgs.config.allowUnfree = true;
 
 
   # boot
@@ -63,6 +64,7 @@
     extraGroups = [
       "wheel"
       "seat"
+      "docker"
       "networkmanager"
       "video"
       "audio"
@@ -86,17 +88,23 @@
 
   # programs
   programs.fish.enable = true;
+  programs.nushell.enable = true;
+
   programs.firefox.enable = true;
   programs.vim = {
     enable = true;
     defaultEditor = true;
   };
+
+  programs.steam.enable = true;
   
   # todo: ??
   services.upower.enable = true;
   services.power-profiles-daemon.enable = true;
-
+  
   services.flatpak.enable = true;
+  virtualisation.docker.enable = true;
+  programs.nix-ld.enable = true;
 
-  environment.systemPackages = with pkgs; [ git xwayland-satellite lm_sensors ];
+  environment.systemPackages = with pkgs; [ git xwayland-satellite lm_sensors nodejs ];
 }
