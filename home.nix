@@ -85,3 +85,4 @@
 
     settings.theme = "seoul256-light";
   };
+}
