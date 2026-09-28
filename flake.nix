@@ -17,7 +17,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
-  
+
+
   outputs = { nixpkgs, home-manager, ... }@inputs:
     let system = "x86_64-linux";
         pkgs = nixpkgs.legacyPackages.${system}; in {
@@ -41,13 +42,15 @@
             useGlobalPkgs = true;
             useUserPackages = true;
             users.fruit = {
-              imports = [ ./home ];
+              imports = [ ./home.nix ];
             };
           };
         }
       ];
     };
 
+
+    # devshells
     devShells.${system} = {
       c = pkgs.mkShell {
         packages = with pkgs; [

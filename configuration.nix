@@ -5,8 +5,7 @@
   
   system.stateVersion = "25.11";
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-
+  
 
   # boot
   boot.loader = {
@@ -21,11 +20,24 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
 
+  # exfat partition shared with windows
+  fileSystems."/media" = {
+    device = "/dev/disk/by-label/media";
+    fsType = "exfat";
+    options = [
+      "uid=1000"
+      "gid=999"
+      "umask=022"
+      "nofail"
+      "x-systemd.automount"
+      "x-systemd.device-timeout=5s"
+    ];
+  };
+
 
   # network
   networking.hostName = "madeleine";
   networking.networkmanager.enable = true;
-
 
 
   # general
@@ -39,9 +51,18 @@
     font = "Lat2-Terminus16";
     keyMap = "fr";
   };
-
+  
   services.libinput.enable = true;
+  services.upower.enable = true;
+  services.power-profiles-daemon.enable = true;
+  
+  
+  # display
+  services.displayManager.lemurs.enable = true; # display manager
+  security.pam.services.swaylock = {};          # lock screen
+  programs.niri.enable = true;                  # wayland compositor
 
+  xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-gtk xdg-desktop-portal-gnome ];
 
 
   # sound
@@ -51,11 +72,8 @@
   };
 
 
-
-  # users
-  users.defaultUserShell = pkgs.fish;
+  # fru 🦋
   users.groups.fruit = {};
-
   users.users.fruit = {
     isNormalUser = true;
     group = "fruit";
@@ -65,35 +83,50 @@
       "networkmanager"
       "video"
       "audio"
-      "realtime"
       "pipewire"
+      "realtime"
     ];
-    useDefaultShell = true;
+    
+    shell = pkgs.fish;
   };
-
-
-
-  # display
-  services.displayManager.lemurs.enable = true; # display manager
-  security.pam.services.swaylock = {};          # lock screen
-  # hardware.acpilight.enable = true;             # backlight
-  programs.niri.enable = true;                  # wayland compositor
-
-  xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-gtk xdg-desktop-portal-gnome ];
-
 
 
   # programs
   programs.fish.enable = true;
-  programs.firefox.enable = true;
   programs.vim = {
     enable = true;
     defaultEditor = true;
   };
-  
-  # todo: ??
-  services.upower.enable = true;
-  services.power-profiles-daemon.enable = true;
 
-  environment.systemPackages = with pkgs; [ git xwayland-satellite lm_sensors ];
+  environment.systemPackages = with pkgs; [
+    lm_sensors
+    curl
+    git
+    gzip
+    nil
+  ];
+
+  users.users.fruit.packages = with pkgs; [
+    nerd-fonts.dejavu-sans-mono
+    bibata-cursors
+    quickshell
+    swaybg
+    xwayland-satellite
+
+    dolphin
+    nnn
+    helium
+    firefox
+    nsxiv
+    vlc
+    obs-studio
+    inkscape
+    godot
+    vesktop
+
+    qbittorrent
+    nicotine-plus
+
+    rusty-path-of-building
+  ];
 }
