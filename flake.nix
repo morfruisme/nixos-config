@@ -6,12 +6,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    helium = {
-      url = "github:schembriaiden/helium-browser-nix-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
+    
     quickshell = {
       url = "git+https://git.outfoxxed.me/quickshell/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -27,7 +22,6 @@
       modules = [
         {
           nixpkgs.overlays = [
-            inputs.helium.overlays.default
             (final: prev: {
               quickshell = inputs.quickshell.packages.${system}.default;
             })
@@ -41,39 +35,13 @@
             useGlobalPkgs = true;
             useUserPackages = true;
             users.fruit = {
-              imports = [ ./home ];
+              imports = [ ./home.nix ];
             };
           };
         }
       ];
     };
 
-    devShells.${system} = {
-      c = pkgs.mkShell {
-        packages = with pkgs; [
-          gcc
-          clang-tools
-          gnumake
-        ];
-      };
-
-      haskell = pkgs.mkShell {
-          packages = with pkgs.haskellPackages; [
-          ghc
-          haskell-language-server
-        ];
-      };
-
-      python = pkgs.mkShell {
-        packages = [
-          (pkgs.python3.withPackages (pkgs: with pkgs; [
-            numpy
-            pillow
-            pip
-            python-lsp-server
-          ]))
-        ];
-      };
-    };
+    devShells.${system} = import ./devshells.nix { inherit pkgs; };
   };
 }

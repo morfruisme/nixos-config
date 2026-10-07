@@ -13,20 +13,18 @@
   boot.loader = {
     systemd-boot.enable = true;
     systemd-boot.configurationLimit = 2;
-    systemd-boot.memtest86.enable = true;
+    # systemd-boot.memtest86.enable = true;
 
     efi.canTouchEfiVariables = true;
     timeout = null;
   };
-
+  
   boot.kernelPackages = pkgs.linuxPackages_latest;
-
 
 
   # network
   networking.hostName = "germaine";
   networking.networkmanager.enable = true;
-
 
 
   # general
@@ -42,38 +40,8 @@
   };
 
   services.libinput.enable = true;
-
-
-
-  # sound
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    pulse.enable = true;
-    wireplumber.enable = true;
-  };
-
-
-  # users
-  users.defaultUserShell = pkgs.fish;
-  users.groups.fruit = {};
-
-  users.users.fruit = {
-    isNormalUser = true;
-    group = "fruit";
-    extraGroups = [
-      "wheel"
-      "seat"
-      "docker"
-      "networkmanager"
-      "video"
-      "audio"
-      "realtime"
-      "pipewire"
-    ];
-    useDefaultShell = true;
-  };
-
+  services.upower.enable = true;
+  services.power-profiles-daemon.enable = true;
 
 
   # display
@@ -84,27 +52,72 @@
 
   xdg.portal.extraPortals = with pkgs; [ xdg-desktop-portal-gtk xdg-desktop-portal-gnome ];
 
+  
+  # sound
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    pulse.enable = true;
+    wireplumber.enable = true;
+  };
+
+
+  # fru 🦋
+  users.groups.fruit = {};
+  users.users.fruit = {
+    isNormalUser = true;
+    group = "fruit";
+    extraGroups = [
+      "wheel"
+      "seat"
+      "docker"
+      "networkmanager"
+      "video"
+      "audio"
+      "pipewire"
+      "realtime"
+    ];
+
+    shell = pkgs.fish;
+  };
 
 
   # programs
   programs.fish.enable = true;
   programs.nushell.enable = true;
-
-  programs.firefox.enable = true;
-  programs.vim = {
-    enable = true;
-    defaultEditor = true;
-  };
-
   programs.steam.enable = true;
+
+  environment.systemPackages = with pkgs; [
+    lm_sensors
+    curl
+    git
+    gzip
+    nil
+    xwayland-satellite
+  ];
+
+  users.users.fruit.packages = with pkgs; [
+    nerd-fonts.dejavu-sans-mono
+    bibata-cursors
+    quickshell
+    swaybg
+    xwayland-satellite
+
+    dolphin
+    nnn
+    firefox
+    nsxiv
+    vlc
+    obs-studio
+    inkscape
+    vesktop
+
+    qbittorrent
+    nicotine-plus
+  ];
   
-  # todo: ??
-  services.upower.enable = true;
-  services.power-profiles-daemon.enable = true;
-  
+
   services.flatpak.enable = true;
   virtualisation.docker.enable = true;
   programs.nix-ld.enable = true;
-
-  environment.systemPackages = with pkgs; [ git xwayland-satellite lm_sensors nodejs ];
 }
